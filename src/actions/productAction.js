@@ -49,3 +49,15 @@ export const updateProduct = (product) => async (dispatch) => {
     });
   }
 };
+export const deleteProduct = (productId) => async (dispatch) => {
+  try {
+    await axios.delete(`http://localhost:4000/api/products/${productId}`);
+
+    dispatch({
+      type: "DELETE",
+      payload: productId,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};

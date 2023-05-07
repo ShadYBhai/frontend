@@ -27,47 +27,16 @@ export const addProductReducer = (state = initialState.product, action) => {
   }
 };
 
-const productsReducer = (state = initialState, action) => {
+export const deleteProducts = (state = initialState, action) => {
   switch (action.type) {
-    case "GET_PRODUCTS_REQUEST":
-    case "ADD_PRODUCT_REQUEST":
-    case "UPDATE_PRODUCT_REQUEST":
+    case "DELETE":
       return {
         ...state,
-        loading: true,
-        error: null,
-      };
-    case "GET_PRODUCTS_SUCCESS":
-      return {
-        ...state,
-        products: action.payload,
-        loading: false,
-        error: null,
-      };
-    case "ADD_PRODUCT_SUCCESS":
-      return {
-        ...state,
-        products: [...state.products, action.payload],
-        loading: false,
-        error: null,
-      };
-    case "UPDATE_PRODUCT_SUCCESS":
-      return {
-        ...state,
-        products: state.products.map((product) =>
-          product._id === action.payload._id ? action.payload : product
+        products: state.products.filter(
+          (product) => product.id !== action.payload
         ),
-        loading: false,
-        error: null,
       };
-    case "GET_PRODUCTS_FAILURE":
-    case "ADD_PRODUCT_FAILURE":
-    case "UPDATE_PRODUCT_FAILURE":
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
+
     default:
       return state;
   }

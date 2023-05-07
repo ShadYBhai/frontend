@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { GrAddCircle } from "react-icons/gr";
-import { getProducts, updateProduct } from "../actions/productAction";
+import {
+  deleteProduct,
+  getProducts,
+  updateProduct,
+} from "../actions/productAction";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct } from "../actions/productAction";
 import axios from "axios";
@@ -17,6 +21,7 @@ const Sidebar = () => {
   const [quantity, setQuantity] = useState("");
   const [allProducts, setAllProducts] = useState("");
   const [editedProduct, setEditedProduct] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState("");
 
   const dispatch = useDispatch();
 
@@ -99,12 +104,21 @@ const Sidebar = () => {
 
   const handleShow = () => {
     setShowModal(true);
+    setSelectedProductId("");
   };
   function handleModalClose(event) {
     if (event.target.className === "modal") {
       setShowModal(false);
     }
   }
+  const handleDelete = (product) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${product.productName}?`
+    );
+    if (confirmed) {
+      dispatch(deleteProduct(product._id));
+    }
+  };
 
   useEffect(() => {
     getProducts();
@@ -117,7 +131,7 @@ const Sidebar = () => {
   return (
     <MainComponent>
       <SideComponent>
-        {/* <h1 className="heading">Proudcts</h1> */}
+        <h1 className="heading">Proudcts</h1>
         <ul>
           <GrAddCircle className="add-icon" />
           <button className="add-button" onClick={handleShow}>
@@ -196,18 +210,6 @@ const Sidebar = () => {
                   required
                 />
               </div>
-              {/* <div>
-                <label htmlFor="VATPercentage">VAT Percentage:</label>
-                <input
-                  type="number"
-                  id="VATPercentage"
-                  min="0"
-                  max="100"
-                  value={VATPercentage}
-                  onChange={(e) => setVATPercentage(e.target.value)}
-                  required
-                />
-              </div> */}
 
               <button className="add-product" type="submit">
                 Add Product
@@ -276,7 +278,7 @@ const Sidebar = () => {
                       onChange={handleChange}
                     />
                   ) : (
-                    `${product.netPrice ? product.netPrice.toFixed(2) : "-"}`
+                    `$${product.netPrice ? product.netPrice.toFixed(2) : "-"}`
                   )}
                 </td>
                 <td>
@@ -288,7 +290,7 @@ const Sidebar = () => {
                       onChange={handleChange}
                     />
                   ) : (
-                    `${
+                    `$${
                       product.grossPrice ? product.grossPrice.toFixed(2) : "-"
                     }`
                   )}
@@ -300,7 +302,12 @@ const Sidebar = () => {
                       <button onClick={handleCancel}>Cancel</button>
                     </>
                   ) : (
-                    <button onClick={() => handleEdit(product)}>Edit</button>
+                    <>
+                      <button onClick={() => handleEdit(product)}>Edit</button>
+                      <button onClick={() => handleDelete(product)}>
+                        Delete
+                      </button>
+                    </>
                   )}
                 </td>
               </tr>
