@@ -39,16 +39,17 @@ const Sidebar = () => {
     e.preventDefault();
 
     try {
-      const netPricePerQty =
-        editedProduct.grossPricePerQty -
-        (editedProduct.grossPricePerQty * editedProduct.vat) / 100;
+      editedProduct.netPrice =
+        editedProduct.grossPrice -
+        (editedProduct.grossPrice * editedProduct.vat) / 100;
 
-      const updatedProduct = {
-        ...editedProduct,
-        netPricePerQty,
-      };
+      // const updatedProduct = {
+      //   ...editedProduct,
+      //   netPricePerQty,
+      // };
+      console.log(editedProduct.netPrice);
 
-      await dispatch(updateProduct(updatedProduct));
+      await dispatch(updateProduct(editedProduct));
       setEditedProduct(null);
       setProductsUpdated(true);
     } catch (err) {
@@ -116,7 +117,7 @@ const Sidebar = () => {
   return (
     <MainComponent>
       <SideComponent>
-        <h1 className="heading">Proudcts</h1>
+        {/* <h1 className="heading">Proudcts</h1> */}
         <ul>
           <GrAddCircle className="add-icon" />
           <button className="add-button" onClick={handleShow}>
