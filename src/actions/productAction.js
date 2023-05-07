@@ -1,7 +1,9 @@
 import axios from "axios";
 
 export const getProducts = () => async (dispatch) => {
-  const products = await axios.get(`http://localhost:4000/products`);
+  const products = await axios.get(
+    `https://ace-backend-ydma.onrender.com/products`
+  );
 
   dispatch({
     type: "GET_PRODUCTS",
@@ -30,7 +32,7 @@ export const updateProduct = (product) => async (dispatch) => {
 
   try {
     const response = await axios.put(
-      `https://ace-backend-ydma.onrender.com/${product._id}`,
+      `https://ace-backend-ydma.onrender.com/products/${product._id}`,
       product
     );
 
