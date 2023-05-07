@@ -14,7 +14,7 @@ export const getProducts = () => async (dispatch) => {
 export const addProduct = (newProduct) => async (dispatch) => {
   try {
     const response = await axios.post(
-      "http://localhost:4000/add-product",
+      "https://ace-backend-ydma.onrender.com/add-product",
       newProduct
     );
     dispatch({
@@ -30,7 +30,7 @@ export const updateProduct = (product) => async (dispatch) => {
 
   try {
     const response = await axios.put(
-      `http://localhost:4000/products/${product._id}`,
+      `https://ace-backend-ydma.onrender.com/${product._id}`,
       product
     );
 
