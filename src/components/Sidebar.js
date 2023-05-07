@@ -131,7 +131,7 @@ const Sidebar = () => {
   return (
     <MainComponent>
       <SideComponent>
-        <h1 className="heading">Proudcts</h1>
+        <h1 className="heading">Products</h1>
         <ul>
           <GrAddCircle className="add-icon" />
           <button className="add-button" onClick={handleShow}>
