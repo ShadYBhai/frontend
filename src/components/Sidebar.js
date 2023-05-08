@@ -78,6 +78,23 @@ const Sidebar = () => {
     }));
   };
 
+  function handleFileChange(event) {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetch("/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
+        // Handle the response from the server
+      })
+      .catch((error) => {
+        // Handle any errors that occur during the fetch request
+      });
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const netPricePerQty = grossPricePerQty - (grossPricePerQty * vat) / 100;
@@ -214,6 +231,16 @@ const Sidebar = () => {
               <button className="add-product" type="submit">
                 Add Product
               </button>
+
+              <button className="file" type="submit">
+                <input
+                  className="file-upload"
+                  type="file"
+                  onChange={handleFileChange}
+                  accept=".png,.jpg,.jpeg"
+                  required
+                />
+              </button>
             </form>
           </div>
         </div>
@@ -337,6 +364,7 @@ const InnerComponent = styled.table`
   ul {
     list-style: none;
   }
+
   ul li {
     font-family: "Rubik";
     font-style: normal;
@@ -419,4 +447,8 @@ const SideComponent = styled.div`
 
 const MainComponent = styled.div`
   display: flex;
+  .file {
+    margin-top: 1rem;
+    border: none;
+  }
 `;
