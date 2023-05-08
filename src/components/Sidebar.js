@@ -334,13 +334,8 @@ const Sidebar = () => {
 export default Sidebar;
 
 const InnerComponent = styled.table`
-  /* width: 500px; */
-  /* height: auto; */
   height: 700px;
-  /* background: #f3f8ff; */
-  /* display: flex; */
   margin: auto;
-  /* justify-content: center; */
 
   .food-description {
     display: flex;
