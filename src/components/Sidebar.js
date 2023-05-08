@@ -13,6 +13,8 @@ import axios from "axios";
 const Sidebar = () => {
   const [showModal, setShowModal] = useState(false);
   const [productName, setProductName] = useState("");
+  const [file, setFile] = useState(null);
+
   const [vat, setVat] = useState("");
   const [netPrice, setNetPrice] = useState("");
   const [grossPrice, setGrossPrice] = useState("");
@@ -47,11 +49,6 @@ const Sidebar = () => {
       editedProduct.netPrice =
         editedProduct.grossPrice -
         (editedProduct.grossPrice * editedProduct.vat) / 100;
-
-      // const updatedProduct = {
-      //   ...editedProduct,
-      //   netPricePerQty,
-      // };
       console.log(editedProduct.netPrice);
 
       await dispatch(updateProduct(editedProduct));
@@ -78,26 +75,21 @@ const Sidebar = () => {
     }));
   };
 
-  function handleFileChange(event) {
-    const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
 
-    fetch("/upload", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => {
-        // Handle the response from the server
-      })
-      .catch((error) => {
-        // Handle any errors that occur during the fetch request
-      });
-  }
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formData = new FormData();
+
+    formData.append("image", file);
+
+    const res = await axios.post("http://localhost:4000/upload", formData);
+
     const netPricePerQty = grossPricePerQty - (grossPricePerQty * vat) / 100;
+
     const newProduct = {
       productName: productName,
       quantity: quantity,
@@ -105,9 +97,11 @@ const Sidebar = () => {
       grossPrice: grossPricePerQty,
       vat: vat,
     };
+
     dispatch(addProduct(newProduct)).then(() => {
       dispatch(getProducts());
     });
+
     handleClose();
     setProductName("");
     setVat("");
@@ -231,16 +225,15 @@ const Sidebar = () => {
               <button className="add-product" type="submit">
                 Add Product
               </button>
-
+              {/* 
               <button className="file" type="submit">
                 <input
                   className="file-upload"
                   type="file"
                   onChange={handleFileChange}
                   accept=".png,.jpg,.jpeg"
-                  required
                 />
-              </button>
+              </button> */}
             </form>
           </div>
         </div>
