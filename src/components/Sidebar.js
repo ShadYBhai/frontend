@@ -9,12 +9,13 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct } from "../actions/productAction";
 import axios from "axios";
+import { AiFillEdit } from "react-icons/ai";
+import EditComponent from "./EditComponent";
 
 const Sidebar = () => {
   const [showModal, setShowModal] = useState(false);
   const [productName, setProductName] = useState("");
   const [file, setFile] = useState(null);
-
   const [vat, setVat] = useState("");
   const [netPrice, setNetPrice] = useState("");
   const [grossPrice, setGrossPrice] = useState("");
@@ -24,13 +25,14 @@ const Sidebar = () => {
   const [allProducts, setAllProducts] = useState("");
   const [editedProduct, setEditedProduct] = useState(null);
   const [selectedProductId, setSelectedProductId] = useState("");
+  const [editModal, setEditModal] = useState(false);
+  const [productsUpdated, setProductsUpdated] = useState(false);
 
   const dispatch = useDispatch();
 
   const products = useSelector(
     (state) => state.products.products.products?.data
   );
-  console.log(products);
 
   const handleEdit = (product) => {
     setEditedProduct(product);
@@ -39,8 +41,6 @@ const Sidebar = () => {
   const handleCancel = () => {
     setEditedProduct(null);
   };
-
-  const [productsUpdated, setProductsUpdated] = useState(false);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -86,7 +86,7 @@ const Sidebar = () => {
 
     formData.append("image", file);
 
-    const res = await axios.post("http://localhost:4000/upload", formData);
+    const res = await axios.post("http://localhost:4000/upload");
 
     const netPricePerQty = grossPricePerQty - (grossPricePerQty * vat) / 100;
 
@@ -139,6 +139,39 @@ const Sidebar = () => {
     dispatch(getProducts());
   }, [dispatch]);
 
+  const handleEditPopUp = (id) => {
+    setEditModal(true);
+    const product = products.find((p) => p._id === id);
+    setEditedProduct(product);
+  };
+
+  const popuponCancel = () => {
+    setEditModal(false);
+  };
+
+  const onPopUpSave = async (e) => {
+    e.preventDefault();
+
+    try {
+      editedProduct.netPrice =
+        editedProduct.grossPrice -
+        (editedProduct.grossPrice * editedProduct.vat) / 100;
+      console.log(editedProduct.netPrice);
+
+      await dispatch(updateProduct(editedProduct));
+      setEditedProduct(null);
+      setProductsUpdated(true);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  function handleModalClick(event) {
+    if (event.target.classList.contains("modal")) {
+      popuponCancel();
+    }
+  }
+
   return (
     <MainComponent>
       <SideComponent>
@@ -152,11 +185,18 @@ const Sidebar = () => {
           {products &&
             products.map((food) => (
               <>
-                <li className="food">{food.productName}</li>
+                <li onClick={() => handleEditPopUp(food._id)} className="food">
+                  {food.productName}{" "}
+                  <span className="edit-icon">
+                    <AiFillEdit />
+                  </span>
+                </li>
               </>
             ))}
         </ul>
       </SideComponent>
+      {editModal && <EditComponent editedProduct={editedProduct} />}
+
       {showModal && (
         <div className="modal" onClick={handleModalClose}>
           <div className="model-inner">
@@ -225,15 +265,16 @@ const Sidebar = () => {
               <button className="add-product" type="submit">
                 Add Product
               </button>
-              {/* 
+
               <button className="file" type="submit">
                 <input
                   className="file-upload"
                   type="file"
                   onChange={handleFileChange}
                   accept=".png,.jpg,.jpeg"
+                  required
                 />
-              </button> */}
+              </button>
             </form>
           </div>
         </div>
@@ -375,14 +416,21 @@ const SideComponent = styled.div`
   height: auto;
   box-shadow: 0px 0px 20px 1px rgba(0, 0, 0, 0.05);
 
+  .edit-icon {
+    position: relative;
+    left: 3rem;
+    cursor: pointer;
+  }
   ul {
     list-style: none;
     margin-top: 1rem;
   }
   ul li {
+    cursor: pointer;
     padding: 1rem;
-    width: 175px;
+    width: 135px;
     height: 24px;
+    margin: auto;
     box-shadow: 0px 0px 20px 1px rgba(0, 0, 0, 0.05);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   }
