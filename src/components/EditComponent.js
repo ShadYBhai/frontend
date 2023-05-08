@@ -18,6 +18,7 @@ const EditComponent = ({
       <div className="modal" onClick={handleModalClick}>
         <div className="model-inner">
           <form>
+            <h2>Edit Product</h2>
             <div>
               <label htmlFor="productName">Product Name:</label>
               <input

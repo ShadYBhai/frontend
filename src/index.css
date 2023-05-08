@@ -22,6 +22,13 @@ code {
   border-radius: 6px;
   box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
 }
+.edit {
+  width: 90px;
+  height: 31px;
+  margin-left: 10px;
+  border: none;
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+}
 
 .product-table {
   border-collapse: collapse;
@@ -68,6 +75,7 @@ code {
 
 .add-product {
   width: 101px;
+  cursor: pointer;
   height: 50px;
   background: #ffffff;
   box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
@@ -88,12 +96,15 @@ code {
 
 .add-product-form {
   display: flex;
+  cursor: pointer;
+
   flex-direction: column;
   position: relative;
 }
 
 .add-product-form h2 {
   margin-top: 0;
+  cursor: pointer;
 }
 
 .add-product-form label {

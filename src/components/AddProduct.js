@@ -17,7 +17,11 @@ const AddProduct = ({
   return (
     <div className="modal" onClick={handleModalClose}>
       <div className="model-inner">
-        <form className="add-product-form" onSubmit={handleSubmit}>
+        <form
+          className="add-product-form"
+          onSubmit={handleSubmit}
+          encType="multipart/form-data"
+        >
           <h2>Add Product</h2>
           <div>
             <label htmlFor="productName">Product Name:</label>
@@ -79,11 +83,7 @@ const AddProduct = ({
             />
           </div>
 
-          <button className="add-product" type="submit">
-            Add Product
-          </button>
-
-          {/* <button className="file" type="submit">
+          <button className="file" type="submit">
             <input
               className="file-upload"
               type="file"
@@ -91,7 +91,10 @@ const AddProduct = ({
               accept=".png,.jpg,.jpeg"
               required
             />
-          </button> */}
+          </button>
+          <button className="add-product" type="submit">
+            Add Product
+          </button>
         </form>
       </div>
     </div>

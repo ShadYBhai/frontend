@@ -12,6 +12,7 @@ import axios from "axios";
 import { AiFillEdit } from "react-icons/ai";
 import EditComponent from "./EditComponent";
 import AddProduct from "./AddProduct";
+import { AiFillDelete } from "react-icons/ai";
 
 const Sidebar = () => {
   const [showModal, setShowModal] = useState(false);
@@ -81,32 +82,47 @@ const Sidebar = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
 
-    // const formData = new FormData();
+    formData.append("image", file);
+    formData.append("productName", productName);
+    try {
+      const response = await axios.post(
+        "https://ace-backend-ydma.onrender.com/upload",
+        formData
+      );
 
-    // formData.append("image", file);
+      const { imageUrl } = response.data;
 
-    // await axios.post("http://localhost:4000/upload", formData);
+      formData.append("productName", productName);
+      formData.append("quantity", quantity);
+      formData.append("netPrice", netPrice);
+      formData.append("grossPrice", grossPrice);
+      formData.append("vat", vat);
 
-    const netPricePerQty = grossPricePerQty - (grossPricePerQty * vat) / 100;
+      const netPricePerQty = grossPricePerQty - (grossPricePerQty * vat) / 100;
 
-    const newProduct = {
-      productName: productName,
-      quantity: quantity,
-      netPrice: netPricePerQty,
-      grossPrice: grossPricePerQty,
-      vat: vat,
-    };
+      const newProduct = {
+        productName: productName,
+        quantity: quantity,
+        netPrice: netPricePerQty,
+        grossPrice: grossPricePerQty,
+        vat: vat,
+        imageUrl: imageUrl,
+      };
 
-    dispatch(addProduct(newProduct)).then(() => {
-      dispatch(getProducts());
-    });
+      dispatch(addProduct(newProduct)).then(() => {
+        dispatch(getProducts());
+      });
 
-    handleClose();
-    setProductName("");
-    setVat("");
-    setNetPrice("");
-    setGrossPrice("");
+      handleClose();
+      setProductName("");
+      setVat("");
+      setNetPrice("");
+      setGrossPrice("");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleClose = () => {
@@ -127,9 +143,17 @@ const Sidebar = () => {
       `Are you sure you want to delete ${product.productName}?`
     );
     if (confirmed) {
-      dispatch(deleteProduct(product._id));
+      dispatch(deleteProduct(product._id)).then(dispatch(getProducts()));
+      setProductsUpdated(true);
     }
   };
+
+  useEffect(() => {
+    if (productsUpdated) {
+      dispatch(getProducts());
+      setProductsUpdated(false);
+    }
+  }, [dispatch, productsUpdated]);
 
   useEffect(() => {
     getProducts();
@@ -311,14 +335,27 @@ const Sidebar = () => {
                 <td>
                   {editedProduct?._id === product._id ? (
                     <>
-                      <button onClick={handleSave}>Save</button>
-                      <button onClick={handleCancel}>Cancel</button>
+                      <button className="edit" onClick={handleSave}>
+                        Save
+                      </button>
+                      <button className="edit" onClick={handleCancel}>
+                        Cancel
+                      </button>
                     </>
                   ) : (
                     <>
-                      <button onClick={() => handleEdit(product)}>Edit</button>
-                      <button onClick={() => handleDelete(product)}>
-                        Delete
+                      <button
+                        className="edit"
+                        onClick={() => handleEdit(product)}
+                      >
+                        <AiFillEdit />
+                        Edit
+                      </button>
+                      <button
+                        className="edit"
+                        onClick={() => handleDelete(product)}
+                      >
+                        <AiFillDelete /> Delete
                       </button>
                     </>
                   )}
