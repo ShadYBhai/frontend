@@ -11,6 +11,7 @@ import { addProduct } from "../actions/productAction";
 import axios from "axios";
 import { AiFillEdit } from "react-icons/ai";
 import EditComponent from "./EditComponent";
+import AddProduct from "./AddProduct";
 
 const Sidebar = () => {
   const [showModal, setShowModal] = useState(false);
@@ -22,7 +23,6 @@ const Sidebar = () => {
   const [grossPricePerQty, setGrossPricePerQty] = useState("");
   const [VATPercentage, setVATPercentage] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [allProducts, setAllProducts] = useState("");
   const [editedProduct, setEditedProduct] = useState(null);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [editModal, setEditModal] = useState(false);
@@ -82,11 +82,11 @@ const Sidebar = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
+    // const formData = new FormData();
 
-    formData.append("image", file);
+    // formData.append("image", file);
 
-    const res = await axios.post("http://localhost:4000/upload");
+    // await axios.post("http://localhost:4000/upload", formData);
 
     const netPricePerQty = grossPricePerQty - (grossPricePerQty * vat) / 100;
 
@@ -172,6 +172,15 @@ const Sidebar = () => {
     }
   }
 
+  const onDelete = () => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${editedProduct.productName}?`
+    );
+    if (confirmed) {
+      dispatch(deleteProduct(editedProduct._id));
+    }
+  };
+
   return (
     <MainComponent>
       <SideComponent>
@@ -186,7 +195,7 @@ const Sidebar = () => {
             products.map((food) => (
               <>
                 <li onClick={() => handleEditPopUp(food._id)} className="food">
-                  {food.productName}{" "}
+                  {food.productName}
                   <span className="edit-icon">
                     <AiFillEdit />
                   </span>
@@ -195,89 +204,32 @@ const Sidebar = () => {
             ))}
         </ul>
       </SideComponent>
-      {editModal && <EditComponent editedProduct={editedProduct} />}
+      {editModal && (
+        <EditComponent
+          handleModalClick={handleModalClick}
+          editedProduct={editedProduct}
+          handleChange={handleChange}
+          onDelete={onDelete}
+          onPopUpSave={onPopUpSave}
+          popuponCancel={onPopUpSave}
+        />
+      )}
 
       {showModal && (
-        <div className="modal" onClick={handleModalClose}>
-          <div className="model-inner">
-            <form className="add-product-form" onSubmit={handleSubmit}>
-              <h2>Add Product</h2>
-              <div>
-                <label htmlFor="productName">Product Name:</label>
-                <input
-                  type="text"
-                  id="productName"
-                  value={productName}
-                  onChange={(e) => setProductName(e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="grossPrice">Price per Qty (Gross):</label>
-                <input
-                  type="number"
-                  id="grossPrice"
-                  min="0"
-                  step="0.01"
-                  value={grossPricePerQty}
-                  onChange={(e) => setGrossPricePerQty(e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="vat">VAT:</label>
-                <select
-                  id="vat"
-                  value={vat}
-                  onChange={(e) => setVat(e.target.value)}
-                  required
-                >
-                  <option value="">-- Select VAT Percentage --</option>
-                  <option value="10">10%</option>
-                  <option value="20">20%</option>
-                  <option value="30">30%</option>
-                  {/* Add more VAT percentage options if needed */}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="netPrice">Price Per Qty (net):</label>
-                <input
-                  type="number"
-                  id="netPrice"
-                  min="0"
-                  step="0.01"
-                  value={netPrice}
-                  readOnly
-                />
-              </div>
-              <div>
-                <label htmlFor="quantity">Quantity:</label>
-                <input
-                  type="number"
-                  id="quantity"
-                  min="1"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                  required
-                />
-              </div>
-
-              <button className="add-product" type="submit">
-                Add Product
-              </button>
-
-              <button className="file" type="submit">
-                <input
-                  className="file-upload"
-                  type="file"
-                  onChange={handleFileChange}
-                  accept=".png,.jpg,.jpeg"
-                  required
-                />
-              </button>
-            </form>
-          </div>
-        </div>
+        <AddProduct
+          handleModalClose={handleModalClose}
+          handleSubmit={handleSubmit}
+          setProductName={setProductName}
+          setGrossPricePerQty={setGrossPricePerQty}
+          setVat={setVat}
+          setQuantity={setQuantity}
+          handleFileChange={handleFileChange}
+          productName={productName}
+          grossPricePerQty={grossPricePerQty}
+          vat={vat}
+          netPrice={netPrice}
+          quantity={quantity}
+        />
       )}
       <table className="product-table">
         <thead>
